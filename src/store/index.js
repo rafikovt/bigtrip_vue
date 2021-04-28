@@ -1,13 +1,76 @@
 import Vue from "vue";
 import Vuex from "vuex";
-// import API_URL from "../config";
-// import axios from 'axios';
+import { API_URL } from "../config";
+import { PASSWORD } from "../config";
+import axios from "axios";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
-  actions: {},
-  modules: {},
+  state: {
+    tripData: [],
+    destinationsData: [],
+    offersData: [],
+  },
+
+  mutations: {
+    updateTripData(state, data) {
+      state.tripData = data;
+    },
+
+    updateDestinations(state, data) {
+      state.destinationsData = data;
+    },
+
+    updateOffers(state, data) {
+      state.offersData = data;
+    },
+  },
+
+  actions: {
+    loadTripData(context) {
+      return axios
+        .get(`${API_URL}/points`, {
+          auth: {
+            username: "Basic",
+            password: PASSWORD,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          context.commit("updateTripData", response.data);
+        });
+    },
+
+    loadDestinations(context) {
+      return axios
+        .get(`${API_URL}/destinations`, {
+          auth: {
+            username: "Basic",
+            password: PASSWORD,
+          },
+        })
+        .then((response) => {
+          context.commit("updateDestinations", response.data);
+        });
+    },
+
+    loadOffers(context) {
+      return axios
+        .get(`${API_URL}/offers`, {
+          auth: {
+            username: "Basic",
+            password: PASSWORD,
+          },
+        })
+        .then((response) => {
+          context.commit("updateOffers", response.data);
+        });
+    },
+  },
+  getters: {
+    getPoints: (state) => state.tripData,
+    getDestinations: (state) => state.destinationsData,
+    getOffers: (state) => state.offersData,
+  },
 });

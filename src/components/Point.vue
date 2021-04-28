@@ -1,5 +1,5 @@
 <template>
-  <li class="trip-events__item">
+  <li v-if="!isFormMode" class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="2019-03-18">MAR 18</time>
       <div class="event__type">
@@ -58,23 +58,42 @@
           />
         </svg>
       </button>
-      <button class="event__rollup-btn" type="button">
+      <button
+        class="event__rollup-btn"
+        type="button"
+        @click="isFormMode = true"
+      >
         <span class="visually-hidden">Open event</span>
       </button>
     </div>
   </li>
+  <div v-else>
+    <PointForm
+      :destinations="destinations"
+      :offers="offers"
+      v-model="isFormMode"
+    />
+  </div>
 </template>
 
 <script>
+import PointForm from "../components/PointForm";
+
 export default {
+  components: {
+    PointForm,
+  },
   props: {
     point: Object,
+    destinations: Array,
+    offers: Array,
   },
 
   data() {
     return {
       image: `img/icons/${this.point.type}.png`,
       isFavorite: this.point.is_favorite,
+      isFormMode: false,
     };
   },
 };
