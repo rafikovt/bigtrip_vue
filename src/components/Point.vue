@@ -7,7 +7,7 @@
           class="event__type-icon"
           width="42"
           height="42"
-          :src="image"
+          :src="`img/icons/${point.type}.png`"
           alt="Event type icon"
         />
       </div>
@@ -69,6 +69,7 @@
   </li>
   <div v-else>
     <PointForm
+      :point="point"
       :destinations="destinations"
       :offers="offers"
       v-model="isFormMode"
@@ -91,7 +92,6 @@ export default {
 
   data() {
     return {
-      image: `img/icons/${this.point.type}.png`,
       isFavorite: this.point.is_favorite,
       isFormMode: false,
     };
