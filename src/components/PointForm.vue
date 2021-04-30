@@ -75,7 +75,7 @@
           id="event-start-time-1"
           type="text"
           name="event-start-time"
-          value="18/03/19 12:25"
+          :value="pointData.date_from"
         />
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -84,7 +84,7 @@
           id="event-end-time-1"
           type="text"
           name="event-end-time"
-          value="18/03/19 13:35"
+          :value="pointData.date_to"
         />
       </div>
 
@@ -116,7 +116,7 @@
 
         <div class="event__available-offers">
           <div
-            v-for="offer in offersData"
+            v-for="offer in pointData.offers"
             :key="offer.title"
             class="event__offer-selector"
           >
@@ -164,6 +164,7 @@
 
 <script>
 import { getOffers } from "../utils/utils";
+import dayjs from "dayjs";
 
 export default {
   model: {
@@ -179,15 +180,19 @@ export default {
 
   data() {
     return {
-      pointData: Object.assign(this.point),
+      pointData: Object.assign({}, this.point, {
+        offers: getOffers(this.point.type, this.offers, this.point.offers),
+        date_from: dayjs(this.point.date_from).format(`DD/MM/YY HH:mm`),
+        date_to: dayjs(this.point.date_to).format(`DD/MM/YY HH:mm`),
+      }),
     };
   },
 
-  computed: {
-    offersData() {
-      return getOffers(this.pointData.type, this.offers, this.pointData.offers);
-    },
-  },
+  // computed: {
+  //   offersData() {
+  //     return getOffers(this.pointData.type, this.offers, this.pointData.offers);
+  //   },
+  // },
 
   methods: {
     closeForm(isFormMode) {
