@@ -18,6 +18,11 @@ export default new Vuex.Store({
       state.tripData = data;
     },
 
+    updatePoint(state, point) {
+      state.tripData = state.tripData.filter((elem) => elem.id !== point.id);
+      state.tripData.push(point);
+    },
+
     updateDestinations(state, data) {
       state.destinationsData = data;
     },
@@ -65,6 +70,19 @@ export default new Vuex.Store({
         })
         .then((response) => {
           context.commit("updateOffers", response.data);
+        });
+    },
+
+    updateData(context, updatedData) {
+      return axios
+        .put(`${API_URL}/points/${updatedData.id}`, updatedData, {
+          auth: {
+            username: "Basic",
+            password: PASSWORD,
+          },
+        })
+        .then((response) => {
+          context.commit("updatePoint", response.data);
         });
     },
   },

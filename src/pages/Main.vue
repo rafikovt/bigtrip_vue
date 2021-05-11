@@ -12,6 +12,7 @@
 
 <script>
 import Point from "../components/Point";
+import { sortDefault } from "../utils/sort";
 
 export default {
   components: {
@@ -26,7 +27,7 @@ export default {
 
   computed: {
     tripData() {
-      return this.$store.state.tripData;
+      return [...this.$store.getters.getPoints].sort(sortDefault);
     },
 
     destinationsData() {

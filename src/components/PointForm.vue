@@ -98,11 +98,17 @@
           id="event-price-1"
           type="text"
           name="event-price"
-          :value="point.base_price"
+          v-model.number="pointData.base_price"
         />
       </div>
 
-      <button class="event__save-btn btn btn--blue" type="submit">Save</button>
+      <button
+        class="event__save-btn btn btn--blue"
+        type="submit"
+        @click.prevent="updatePoint"
+      >
+        Save
+      </button>
       <button class="event__reset-btn" type="reset">Delete</button>
       <button @click="closeForm(false)" class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
@@ -188,15 +194,21 @@ export default {
     };
   },
 
-  // computed: {
-  //   offersData() {
-  //     return getOffers(this.pointData.type, this.offers, this.pointData.offers);
-  //   },
-  // },
-
   methods: {
     closeForm(isFormMode) {
       this.$emit("closeForm", isFormMode);
+    },
+
+    updatePoint() {
+      this.closeForm(false);
+      this.$store.dispatch(
+        "updateData",
+        Object.assign({}, this.pointData, {
+          offers: this.point.offers,
+          date_to: dayjs(this.pointData.date_to).toISOString(),
+          date_from: this.pointData.date_from,
+        })
+      );
     },
   },
 };
