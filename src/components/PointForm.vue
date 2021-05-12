@@ -23,8 +23,8 @@
             <legend class="visually-hidden">Event type</legend>
 
             <div
-              v-for="eventType in offers"
-              :key="eventType"
+              v-for="(eventType, index) in offers"
+              :key="index"
               class="event__type-item"
             >
               <input
@@ -61,8 +61,8 @@
         />
         <datalist id="destination-list-1">
           <option
-            v-for="destination in destinations"
-            :key="destination.name"
+            v-for="(destination, index) in destinations"
+            :key="index"
             :value="destination.name"
           ></option>
         </datalist>
@@ -75,7 +75,7 @@
           id="event-start-time-1"
           type="text"
           name="event-start-time"
-          :value="pointData.date_from"
+          :value="point.date_from"
         />
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -84,7 +84,7 @@
           id="event-end-time-1"
           type="text"
           name="event-end-time"
-          :value="pointData.date_to"
+          :value="point.date_to"
         />
       </div>
 
@@ -98,7 +98,7 @@
           id="event-price-1"
           type="text"
           name="event-price"
-          v-model.number="pointData.base_price"
+          v-model.number="point.base_price"
         />
       </div>
 
@@ -122,8 +122,8 @@
 
         <div class="event__available-offers">
           <div
-            v-for="offer in pointData.offers"
-            :key="offer.title"
+            v-for="(offer, index) in point.offers"
+            :key="index"
             class="event__offer-selector"
           >
             <input
@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { getOffers } from "../utils/utils";
+// import { getOffers } from "../utils/utils";
 import dayjs from "dayjs";
 
 export default {
@@ -184,15 +184,15 @@ export default {
     offers: Array,
   },
 
-  data() {
-    return {
-      pointData: Object.assign({}, this.point, {
-        offers: getOffers(this.point.type, this.offers, this.point.offers),
-        date_from: dayjs(this.point.date_from).format(`DD/MM/YY HH:mm`),
-        date_to: dayjs(this.point.date_to).format(`DD/MM/YY HH:mm`),
-      }),
-    };
-  },
+  // data() {
+  //   return {
+  //     pointData: Object.assign({}, this.point, {
+  //       offers: getOffers(this.point.type, this.offers, this.point.offers),
+  //       date_from: this.point.date_from.format(`DD/MM/YY HH:mm`),
+  //       date_to: this.point.date_to.format(`DD/MM/YY HH:mm`),
+  //     }),
+  //   };
+  // },
 
   methods: {
     closeForm(isFormMode) {
@@ -201,12 +201,19 @@ export default {
 
     updatePoint() {
       this.closeForm(false);
+      console.log(
+        Object.assign({}, this.point, {
+          offers: this.point.offers,
+          date_to: this.point.date_to.toISOString(),
+          date_from: this.point.date_from.toISOString(),
+        })
+      );
       this.$store.dispatch(
         "updateData",
-        Object.assign({}, this.pointData, {
+        Object.assign({}, this.point, {
           offers: this.point.offers,
-          date_to: dayjs(this.pointData.date_to).toISOString(),
-          date_from: this.pointData.date_from,
+          date_to: dayjs(this.point.date_to).toDate().toISOString(),
+          date_from: dayjs(this.point.date_from).toDate().toISOString(),
         })
       );
     },

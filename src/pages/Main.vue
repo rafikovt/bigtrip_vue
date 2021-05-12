@@ -12,7 +12,7 @@
 
 <script>
 import Point from "../components/Point";
-import { sortDefault } from "../utils/sort";
+// import { sortDefault } from "../utils/sort";
 
 export default {
   components: {
@@ -27,7 +27,7 @@ export default {
 
   computed: {
     tripData() {
-      return [...this.$store.getters.getPoints].sort(sortDefault);
+      return this.$store.getters.getPoints;
     },
 
     destinationsData() {
@@ -37,12 +37,6 @@ export default {
     offersData() {
       return this.$store.state.offersData;
     },
-  },
-
-  created() {
-    this.$store.dispatch("loadTripData");
-    this.$store.dispatch("loadDestinations");
-    this.$store.dispatch("loadOffers");
   },
 };
 </script>
