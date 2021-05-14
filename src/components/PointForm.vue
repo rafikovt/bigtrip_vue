@@ -98,7 +98,7 @@
           id="event-price-1"
           type="text"
           name="event-price"
-          v-model.number="point.base_price"
+          v-model.number="pointData.base_price"
         />
       </div>
 
@@ -121,7 +121,7 @@
         </h3>
 
         <div class="event__available-offers">
-          <div
+          <!-- <div
             v-for="(offer, index) in point.offers"
             :key="index"
             class="event__offer-selector"
@@ -138,7 +138,34 @@
               &plus;&euro;&nbsp;
               <span class="event__offer-price">50</span>
             </label>
-          </div>
+          </div> -->
+          <!-- <div
+            v-for="(offer, index) in offersForThisType"
+            :key="index"
+            class="event__offer-selector"
+            @change.prevent="changeOffers(offer)"
+          >
+            <input
+              class="event__offer-checkbox visually-hidden"
+              id="event-offer-luggage-1"
+              type="checkbox"
+              name="event-offer-luggage"
+              :checked="pointData.offers.some((el) => el.title === offer.title)"
+            />
+            <label class="event__offer-label" for="event-offer-luggage-1">
+              <span class="event__offer-title">{{ offer.title }}</span>
+              &plus;&euro;&nbsp;
+              <span class="event__offer-price">50</span>
+            </label>
+          </div> -->
+          <Offers
+            v-for="(offer, index) in offersForThisType"
+            :key="index"
+            :offersForThisType="offersForThisType"
+            :pointData="pointData"
+            :offer="offer"
+            @change-offer="changeOffers"
+          />
         </div>
       </section>
 
@@ -171,11 +198,16 @@
 <script>
 // import { getOffers } from "../utils/utils";
 import dayjs from "dayjs";
+import Offers from "@/components/Offers";
 
 export default {
   model: {
     prop: "isFormMode",
     event: "closeForm",
+  },
+
+  components: {
+    Offers,
   },
 
   props: {
@@ -210,12 +242,38 @@ export default {
       );
       this.$store.dispatch(
         "updateData",
-        Object.assign({}, this.point, {
-          offers: this.point.offers,
+        Object.assign({}, this.pointData, {
           date_to: dayjs(this.point.date_to).toDate().toISOString(),
           date_from: dayjs(this.point.date_from).toDate().toISOString(),
         })
       );
+    },
+
+    changeOffers(offer) {
+      if (this.pointData.offers.some((el) => el.title === offer.title)) {
+        this.pointData = this.pointData.offers.filter(
+          (el) => el.title !== offer.title
+        );
+      } else {
+        this.pointData.offers.push(offer);
+      }
+    },
+  },
+
+  computed: {
+    offersForThisType() {
+      return this.offers.find((offer) => offer.type == this.point.type).offers;
+    },
+
+    pointData: {
+      get: function () {
+        const test = Object.assign({}, this.point);
+        return test;
+      },
+      set: function (offers) {
+        console.log(offers);
+        this.pointData.offers = offers;
+      },
     },
   },
 };

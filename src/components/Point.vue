@@ -35,7 +35,7 @@
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li
+        <!-- <li
           v-for="(offer, index) in point.offers"
           :key="index"
           class="event__offer"
@@ -45,6 +45,15 @@
             &plus;&euro;&nbsp;
             <span class="event__offer-price">{{ offer.price }}</span>
           </div>
+        </li> -->
+        <li
+          v-for="(offer, index) in point.offers"
+          :key="index"
+          class="event__offer"
+        >
+          <span class="event__offer-title">{{ offer.title }}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">{{ offer.price }}</span>
         </li>
       </ul>
       <button
