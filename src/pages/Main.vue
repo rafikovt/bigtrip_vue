@@ -6,13 +6,14 @@
       :point="point"
       :destinations="destinationsData"
       :offers="offersData"
+      :currentId="currentId"
+      @change-form-mode="currentId = $event"
     />
   </ul>
 </template>
 
 <script>
 import Point from "../components/Point";
-// import { sortDefault } from "../utils/sort";
 
 export default {
   components: {
@@ -22,6 +23,7 @@ export default {
   data() {
     return {
       destinations: this.destinationsData,
+      currentId: null,
     };
   },
 

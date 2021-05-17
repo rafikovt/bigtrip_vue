@@ -1,5 +1,8 @@
 <template>
-  <li v-if="!isFormMode" class="trip-events__item">
+  <div v-if="currentId === point.id">
+    <PointForm :point="point" :destinations="destinations" :offers="offers" />
+  </div>
+  <li v-else class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="2019-03-18">{{
         point.date_from.format("MMM-DD")
@@ -35,17 +38,6 @@
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <!-- <li
-          v-for="(offer, index) in point.offers"
-          :key="index"
-          class="event__offer"
-        >
-          <div v-if="offer.checked">
-            <span class="event__offer-title">{{ offer.title }}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">{{ offer.price }}</span>
-          </div>
-        </li> -->
         <li
           v-for="(offer, index) in point.offers"
           :key="index"
@@ -76,20 +68,12 @@
       <button
         class="event__rollup-btn"
         type="button"
-        @click="isFormMode = true"
+        @click.prevent="$emit('change-form-mode', point.id)"
       >
         <span class="visually-hidden">Open event</span>
       </button>
     </div>
   </li>
-  <div v-else>
-    <PointForm
-      :point="point"
-      :destinations="destinations"
-      :offers="offers"
-      v-model="isFormMode"
-    />
-  </div>
 </template>
 
 <script>
@@ -105,6 +89,7 @@ export default {
     destinations: Array,
     offers: Array,
     formMode: Boolean,
+    currentId: String,
   },
 
   data() {
