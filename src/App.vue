@@ -98,63 +98,19 @@
             action="#"
             method="get"
           >
-            <div class="trip-sort__item trip-sort__item--day">
+            <div v-for="(item, index) in sortTitles" :key="index" class="trip-sort__item" :class="`trip-sort__item--${item}`">
               <input
-                id="sort-day"
+                :id="`sort-${item}`"
                 class="trip-sort__input visually-hidden"
                 type="radio"
                 name="trip-sort"
-                value="sort-day"
+                :value="`sort-${item}`"
+                :checked="currentSortType === item"
+                v-model="currentSortType"
               />
-              <label class="trip-sort__btn" for="sort-day">Day</label>
+              <label class="trip-sort__btn" :for="`sort-${item}`">{{item}}</label>
             </div>
 
-            <div class="trip-sort__item trip-sort__item--event">
-              <input
-                id="sort-event"
-                class="trip-sort__input visually-hidden"
-                type="radio"
-                name="trip-sort"
-                value="sort-event"
-                disabled
-              />
-              <label class="trip-sort__btn" for="sort-event">Event</label>
-            </div>
-
-            <div class="trip-sort__item trip-sort__item--time">
-              <input
-                id="sort-time"
-                class="trip-sort__input visually-hidden"
-                type="radio"
-                name="trip-sort"
-                value="sort-time"
-              />
-              <label class="trip-sort__btn" for="sort-time">Time</label>
-            </div>
-
-            <div class="trip-sort__item trip-sort__item--price">
-              <input
-                id="sort-price"
-                class="trip-sort__input visually-hidden"
-                type="radio"
-                name="trip-sort"
-                value="sort-price"
-                checked
-              />
-              <label class="trip-sort__btn" for="sort-price">Price</label>
-            </div>
-
-            <div class="trip-sort__item trip-sort__item--offer">
-              <input
-                id="sort-offer"
-                class="trip-sort__input visually-hidden"
-                type="radio"
-                name="trip-sort"
-                value="sort-offer"
-                disabled
-              />
-              <label class="trip-sort__btn" for="sort-offer">Offers</label>
-            </div>
           </form>
 
           <!-- Контент -->
@@ -169,14 +125,22 @@
 <script>
 import TripInfo from "@/components/TripInfo.vue";
 import { getTotalPrice } from "@/utils/utils.js";
+import {SORT_TITLES} from "@/const/const";
 export default {
   components: {
     TripInfo,
   },
 
+  data() {
+    return {
+      sortTitles: SORT_TITLES,
+      currentSortType: 'sort-day',
+    }
+  },
+
   computed: {
     tripData() {
-      return this.$store.getters.getPoints;
+        return  this.$store.getters.getPoints(this.currentSortType);
     },
     totalPrice() {
       return getTotalPrice(this.tripData);

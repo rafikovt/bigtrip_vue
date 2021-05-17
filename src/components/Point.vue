@@ -1,6 +1,11 @@
 <template>
   <div v-if="currentId === point.id">
-    <PointForm :point="point" :destinations="destinations" :offers="offers" />
+    <PointForm
+      :point="point"
+      :destinations="destinations"
+      :offers="offers"
+      @reset-currentId="$emit('change-form-mode', $event)"
+    />
   </div>
   <li v-else class="trip-events__item">
     <div class="event">

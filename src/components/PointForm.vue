@@ -73,7 +73,7 @@
         Save
       </button>
       <button class="event__reset-btn" type="reset">Delete</button>
-      <button @click="closeForm(false)" class="event__rollup-btn" type="button">
+      <button @click="$emit('reset-currentId', null)" class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
