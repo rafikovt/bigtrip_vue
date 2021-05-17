@@ -1,62 +1,25 @@
 <template>
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
-      <div class="event__type-wrapper">
-        <label class="event__type event__type-btn" for="event-type-toggle-1">
-          <span class="visually-hidden">Choose event type</span>
-          <img
-            class="event__type-icon"
-            width="17"
-            height="17"
-            :src="`img/icons/${point.type}.png`"
-            alt="Event type icon"
-          />
-        </label>
-        <input
-          class="event__type-toggle visually-hidden"
-          id="event-type-toggle-1"
-          type="checkbox"
-        />
-
-        <div class="event__type-list">
-          <fieldset class="event__type-group">
-            <legend class="visually-hidden">Event type</legend>
-
-            <div
-              v-for="(eventType, index) in offers"
-              :key="index"
-              class="event__type-item"
-            >
-              <input
-                :id="`event-type-${eventType.type.toLowerCase()}-1`"
-                class="event__type-input visually-hidden"
-                type="radio"
-                name="event-type"
-                :value="eventType.type.toLowerCase()"
-              />
-              <label
-                :class="`event__type-label event__type-label--${eventType.type.toLowerCase()}`"
-                :for="`event-type-${eventType.type.toLowerCase()}-1`"
-                >{{ eventType.type }}</label
-              >
-            </div>
-          </fieldset>
-        </div>
-      </div>
+      <EventType
+        :currentType="pointData.type"
+        :eventTypes="offers"
+        @change-type="pointData.type = $event"
+      />
 
       <div class="event__field-group event__field-group--destination">
         <label
           class="event__label event__type-output"
           for="event-destination-1"
         >
-          {{ point.type }}
+          {{ pointData.type }}
         </label>
         <input
           class="event__input event__input--destination"
           id="event-destination-1"
           type="text"
           name="event-destination"
-          :value="point.destination.name"
+          v-model="pointData.destination.name"
           list="destination-list-1"
         />
         <datalist id="destination-list-1">
@@ -121,43 +84,6 @@
         </h3>
 
         <div class="event__available-offers">
-          <!-- <div
-            v-for="(offer, index) in point.offers"
-            :key="index"
-            class="event__offer-selector"
-          >
-            <input
-              class="event__offer-checkbox visually-hidden"
-              id="event-offer-luggage-1"
-              type="checkbox"
-              name="event-offer-luggage"
-              :checked="offer.checked"
-            />
-            <label class="event__offer-label" for="event-offer-luggage-1">
-              <span class="event__offer-title">{{ offer.title }}</span>
-              &plus;&euro;&nbsp;
-              <span class="event__offer-price">50</span>
-            </label>
-          </div> -->
-          <!-- <div
-            v-for="(offer, index) in offersForThisType"
-            :key="index"
-            class="event__offer-selector"
-            @change.prevent="changeOffers(offer)"
-          >
-            <input
-              class="event__offer-checkbox visually-hidden"
-              id="event-offer-luggage-1"
-              type="checkbox"
-              name="event-offer-luggage"
-              :checked="pointData.offers.some((el) => el.title === offer.title)"
-            />
-            <label class="event__offer-label" for="event-offer-luggage-1">
-              <span class="event__offer-title">{{ offer.title }}</span>
-              &plus;&euro;&nbsp;
-              <span class="event__offer-price">50</span>
-            </label>
-          </div> -->
           <Offers
             v-for="(offer, index) in offersForThisType"
             :key="index"
@@ -167,38 +93,20 @@
             @change-offer="changeOffers"
           />
         </div>
-      </section>
-
-      <section class="event__section event__section--destination">
-        <h3 class="event__section-title event__section-title--destination">
-          Destination
-        </h3>
-        <p class="event__destination-description">
-          {{ point.destination.description }}
-        </p>
-        <div
-          v-if="point.destination.pictures.length"
-          class="event__photos-container"
-        >
-          <div class="event__photos-tape">
-            <img
-              v-for="photo in point.destination.pictures"
-              :key="photo.src"
-              class="event__photo"
-              :src="photo.src"
-              :alt="photo.description"
-            />
-          </div>
-        </div>
+        <DestinationInfo
+          :destination="destination"
+          :destinations="destinations"
+        />
       </section>
     </section>
   </form>
 </template>
 
 <script>
-// import { getOffers } from "../utils/utils";
 import dayjs from "dayjs";
 import Offers from "@/components/Offers";
+import DestinationInfo from "./Destination-Info";
+import EventType from "@/components/EventType";
 
 export default {
   model: {
@@ -208,6 +116,8 @@ export default {
 
   components: {
     Offers,
+    DestinationInfo,
+    EventType,
   },
 
   props: {
@@ -216,15 +126,11 @@ export default {
     offers: Array,
   },
 
-  // data() {
-  //   return {
-  //     pointData: Object.assign({}, this.point, {
-  //       offers: getOffers(this.point.type, this.offers, this.point.offers),
-  //       date_from: this.point.date_from.format(`DD/MM/YY HH:mm`),
-  //       date_to: this.point.date_to.format(`DD/MM/YY HH:mm`),
-  //     }),
-  //   };
-  // },
+  data() {
+    return {
+      pointData: JSON.parse(JSON.stringify(this.point)),
+    };
+  },
 
   methods: {
     closeForm(isFormMode) {
@@ -251,29 +157,37 @@ export default {
 
     changeOffers(offer) {
       if (this.pointData.offers.some((el) => el.title === offer.title)) {
-        this.pointData = this.pointData.offers.filter(
+        this.pointData.offers = this.pointData.offers.filter(
           (el) => el.title !== offer.title
         );
       } else {
         this.pointData.offers.push(offer);
       }
     },
+
+    changeType(type) {
+      console.log(type);
+      this.pointData = type;
+    },
   },
 
   computed: {
     offersForThisType() {
-      return this.offers.find((offer) => offer.type == this.point.type).offers;
+      return this.offers.find((offer) => offer.type == this.pointData.type)
+        .offers;
     },
 
-    pointData: {
-      get: function () {
-        const test = Object.assign({}, this.point);
-        return test;
-      },
-      set: function (offers) {
-        console.log(offers);
-        this.pointData.offers = offers;
-      },
+    // pointData: {
+    //   get: function () {
+    //     return JSON.parse(JSON.stringify(this.point));
+    //   },
+    //   set: function (offers) {
+    //     this.pointData.offers = offers;
+    //   },
+    // },
+
+    destination() {
+      return this.pointData.destination;
     },
   },
 };
