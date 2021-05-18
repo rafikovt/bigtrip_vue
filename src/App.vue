@@ -91,27 +91,6 @@
       <div class="page-body__container">
         <section class="trip-events">
           <!-- Сортировка -->
-          <h2 class="visually-hidden">Trip events</h2>
-
-          <form
-            class="trip-events__trip-sort trip-sort"
-            action="#"
-            method="get"
-          >
-            <div v-for="(item, index) in sortTitles" :key="index" class="trip-sort__item" :class="`trip-sort__item--${item}`">
-              <input
-                :id="`sort-${item}`"
-                class="trip-sort__input visually-hidden"
-                type="radio"
-                name="trip-sort"
-                :value="`sort-${item}`"
-                :checked="currentSortType === item"
-                v-model="currentSortType"
-              />
-              <label class="trip-sort__btn" :for="`sort-${item}`">{{item}}</label>
-            </div>
-
-          </form>
 
           <!-- Контент -->
           <router-view />
@@ -125,22 +104,15 @@
 <script>
 import TripInfo from "@/components/TripInfo.vue";
 import { getTotalPrice } from "@/utils/utils.js";
-import {SORT_TITLES} from "@/const/const";
+
 export default {
   components: {
     TripInfo,
   },
 
-  data() {
-    return {
-      sortTitles: SORT_TITLES,
-      currentSortType: 'sort-day',
-    }
-  },
-
   computed: {
     tripData() {
-        return  this.$store.getters.getPoints(this.currentSortType);
+      return this.$store.getters["getPoints"]("sort-day");
     },
     totalPrice() {
       return getTotalPrice(this.tripData);

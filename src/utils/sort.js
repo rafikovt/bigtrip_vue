@@ -5,7 +5,7 @@ export const sortDefault = (prevPoint, nextPoint) => {
     return -1;
 }
 
-export const sortPriceDown = (prevPoint, nextPoint) => nextPoint.price - prevPoint.price;
+export const sortPriceDown = (prevPoint, nextPoint) => nextPoint.base_price - prevPoint.base_price;
 export const sortTimeDown = (prevPoint, nextPoint) => {
     return (nextPoint.date_to - nextPoint.date_from) - (prevPoint.date_to - prevPoint.date_from);
 };

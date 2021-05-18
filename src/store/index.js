@@ -5,7 +5,7 @@ import { PASSWORD } from "../config";
 import axios from "axios";
 // import { getOffers } from "../utils/utils";
 import dayjs from "dayjs";
-import { sortDefault, sortPriceDown} from "../utils/sort";
+import { sortDefault, sortPriceDown, sortTimeDown } from "../utils/sort";
 
 
 Vue.use(Vuex);
@@ -33,6 +33,10 @@ export default new Vuex.Store({
 
     updateOffers(state, data) {
       state.offersData = data;
+    },
+
+    deletePoint(state, id) {
+      state.tripData = state.tripData.filter((elem) => elem.id !== id);
     },
   },
 
@@ -89,6 +93,19 @@ export default new Vuex.Store({
           context.commit("updatePoint", response.data);
         });
     },
+
+    deletePoint(context, id) {
+      return axios
+        .delete(`${API_URL}/points/${id}`, {
+          auth: {
+            username: "Basic",
+            password: PASSWORD,
+          },
+        })
+        .then(() => {
+          context.commit("deletePoint", id);
+        });
+    },
   },
   getters: {
     getDestinations: (state) => state.destinationsData,
@@ -98,13 +115,16 @@ export default new Vuex.Store({
         Object.assign({}, point, {
           date_from: dayjs(point.date_from),
           date_to: dayjs(point.date_to),
-        }))
+        })
+      );
 
-      switch(sortType) {
-
-        case 'sort-price' :
+      switch (sortType) {
+        case "sort-price":
           return newState.sort(sortPriceDown);
-        default: return newState.sort(sortDefault);
+        case "sort-time":
+          return newState.sort(sortTimeDown);
+        default:
+          return newState.sort(sortDefault);
       }
     },
   },

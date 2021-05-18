@@ -72,8 +72,14 @@
       >
         Save
       </button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <button @click="$emit('reset-currentId', null)" class="event__rollup-btn" type="button">
+      <button
+        @click="deletePoint(point.id)"
+        class="event__reset-btn"
+        type="reset"
+      >
+        Delete
+      </button>
+      <button @click="closeForm" class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
@@ -133,19 +139,8 @@ export default {
   },
 
   methods: {
-    closeForm(isFormMode) {
-      this.$emit("closeForm", isFormMode);
-    },
-
     updatePoint() {
-      this.closeForm(false);
-      console.log(
-        Object.assign({}, this.point, {
-          offers: this.point.offers,
-          date_to: this.point.date_to.toISOString(),
-          date_from: this.point.date_from.toISOString(),
-        })
-      );
+      this.closeForm();
       this.$store.dispatch(
         "updateData",
         Object.assign({}, this.pointData, {
@@ -168,6 +163,14 @@ export default {
     changeType(type) {
       console.log(type);
       this.pointData = type;
+    },
+
+    deletePoint(id) {
+      this.$store.dispatch("deletePoint", id).then(this.closeForm());
+    },
+
+    closeForm() {
+      this.$emit("reset-currentId", null);
     },
   },
 
