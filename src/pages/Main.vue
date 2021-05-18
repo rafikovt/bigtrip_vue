@@ -22,6 +22,14 @@
       </div>
     </form>
     <ul class="trip-events__list">
+      <li v-if="$store.state.isAddmode">
+        <PointForm
+          :destinations="destinationsData"
+          :offers="offersData"
+          :isAddMode="isAddMode"
+          :point="newPoint"
+        />
+      </li>
       <Point
         v-for="point in tripData"
         :key="point.id"
@@ -37,11 +45,13 @@
 
 <script>
 import Point from "../components/Point";
+import PointForm from "../components/PointForm";
 import { SORT_TITLES } from "@/const/const";
 
 export default {
   components: {
     Point,
+    PointForm,
   },
 
   data() {
@@ -50,6 +60,7 @@ export default {
       currentId: null,
       sortTitles: SORT_TITLES,
       currentSortType: "sort-day",
+      isAddMode: this.$store.state.isAddmode,
     };
   },
 
@@ -64,6 +75,17 @@ export default {
 
     offersData() {
       return this.$store.state.offersData;
+    },
+
+    newPoint() {
+      return Object.assign({}, this.point, {
+        id: "123",
+        type: this.offersData[0].type,
+        destination: this.destinationsData[0],
+        base_price: 0,
+        is_favorite: false,
+        offers: [],
+      });
     },
   },
 };

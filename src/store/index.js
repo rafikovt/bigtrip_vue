@@ -5,8 +5,7 @@ import { PASSWORD } from "../config";
 import axios from "axios";
 // import { getOffers } from "../utils/utils";
 import dayjs from "dayjs";
-import { sortDefault, sortPriceDown, sortTimeDown } from "../utils/sort";
-
+import { sortDefault, sortPriceDown, sortTimeDown, filter } from "../utils/sort";
 
 Vue.use(Vuex);
 
@@ -15,6 +14,8 @@ export default new Vuex.Store({
     tripData: [],
     destinationsData: [],
     offersData: [],
+    currentFilter: "everything",
+    isAddmode: false,
   },
 
   mutations: {
@@ -37,6 +38,19 @@ export default new Vuex.Store({
 
     deletePoint(state, id) {
       state.tripData = state.tripData.filter((elem) => elem.id !== id);
+    },
+
+    addPoint(state, data) {
+      state.tripData.push(data);
+    },
+
+    setCurrentFilter(state, filter) {
+      state.currentFilter = filter;
+    },
+
+    setAddMode(state) {
+      console.log(1)
+      state.isAddmode = true;
     },
   },
 
@@ -106,18 +120,37 @@ export default new Vuex.Store({
           context.commit("deletePoint", id);
         });
     },
+
+    addPoint(context, data) {
+      return axios
+        .post(
+          `${API_URL}/points`,
+
+          data,
+
+          {
+            auth: {
+              username: "Basic",
+              password: PASSWORD,
+            },
+          }
+        )
+        .then((response) => {
+          context.commit("addPoint", response.data);
+        });
+    },
   },
   getters: {
     getDestinations: (state) => state.destinationsData,
     getOffers: (state) => state.offersData,
     getPoints: (state) => (sortType) => {
-      const newState = state.tripData.map((point) =>
+      let newState = state.tripData.map((point) =>
         Object.assign({}, point, {
           date_from: dayjs(point.date_from),
           date_to: dayjs(point.date_to),
         })
       );
-
+      newState = newState.filter(filter[state.currentFilter]);
       switch (sortType) {
         case "sort-price":
           return newState.sort(sortPriceDown);

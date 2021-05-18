@@ -68,7 +68,7 @@
       <button
         class="event__save-btn btn btn--blue"
         type="submit"
-        @click.prevent="updatePoint"
+        @click.prevent="isAddMode ? addPoint() : updatePoint()"
       >
         Save
       </button>
@@ -77,7 +77,7 @@
         class="event__reset-btn"
         type="reset"
       >
-        Delete
+        {{ isAddMode ? "Cancel" : "Delete" }}
       </button>
       <button @click="closeForm" class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
@@ -115,11 +115,6 @@ import DestinationInfo from "./Destination-Info";
 import EventType from "@/components/EventType";
 
 export default {
-  model: {
-    prop: "isFormMode",
-    event: "closeForm",
-  },
-
   components: {
     Offers,
     DestinationInfo,
@@ -135,12 +130,14 @@ export default {
   data() {
     return {
       pointData: JSON.parse(JSON.stringify(this.point)),
+      isAddMode: this.$store.state.isAddmode,
     };
   },
 
   methods: {
     updatePoint() {
       this.closeForm();
+
       this.$store.dispatch(
         "updateData",
         Object.assign({}, this.pointData, {
@@ -172,6 +169,17 @@ export default {
     closeForm() {
       this.$emit("reset-currentId", null);
     },
+
+    addPoint() {
+      this.closeForm();
+      this.$store.dispatch(
+        "addPoint",
+        Object.assign({}, this.pointData, {
+          date_to: dayjs(this.point.date_to).toDate().toISOString(),
+          date_from: dayjs(this.point.date_from).toDate().toISOString(),
+        })
+      );
+    },
   },
 
   computed: {
@@ -179,15 +187,6 @@ export default {
       return this.offers.find((offer) => offer.type == this.pointData.type)
         .offers;
     },
-
-    // pointData: {
-    //   get: function () {
-    //     return JSON.parse(JSON.stringify(this.point));
-    //   },
-    //   set: function (offers) {
-    //     this.pointData.offers = offers;
-    //   },
-    // },
 
     destination() {
       return this.pointData.destination;

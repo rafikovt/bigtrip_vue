@@ -27,51 +27,28 @@
             </nav>
 
             <h2 class="visually-hidden">Filter events</h2>
-
-            <h2 class="visually-hidden">Filter events</h2>
             <form class="trip-filters" action="#" method="get">
-              <div class="trip-filters__filter">
+              <div
+                v-for="(filter, index) in filterTitles"
+                :key="index"
+                class="trip-filters__filter"
+              >
                 <input
-                  id="filter-everything"
+                  :id="`filter-${filter}`"
                   class="trip-filters__filter-input visually-hidden"
                   type="radio"
                   name="trip-filter"
-                  value="everything"
-                  checked
+                  :value="filter"
+                  :checked="currentFilter === filter"
+                  v-model="currentFilter"
+                  @click="changeFilter(filter)"
                 />
                 <label
                   class="trip-filters__filter-label"
-                  for="filter-everything"
-                  >Everything</label
+                  :for="`filter-${filter}`"
+                  >{{ filter }}</label
                 >
               </div>
-
-              <div class="trip-filters__filter">
-                <input
-                  id="filter-future"
-                  class="trip-filters__filter-input visually-hidden"
-                  type="radio"
-                  name="trip-filter"
-                  value="future"
-                />
-                <label class="trip-filters__filter-label" for="filter-future"
-                  >Future</label
-                >
-              </div>
-
-              <div class="trip-filters__filter">
-                <input
-                  id="filter-past"
-                  class="trip-filters__filter-input visually-hidden"
-                  type="radio"
-                  name="trip-filter"
-                  value="past"
-                />
-                <label class="trip-filters__filter-label" for="filter-past"
-                  >Past</label
-                >
-              </div>
-
               <button class="visually-hidden" type="submit">
                 Accept filter
               </button>
@@ -81,6 +58,7 @@
           <button
             class="trip-main__event-add-btn btn btn--big btn--yellow"
             type="button"
+            @click="changeToAddMode"
           >
             New event
           </button>
@@ -104,10 +82,18 @@
 <script>
 import TripInfo from "@/components/TripInfo.vue";
 import { getTotalPrice } from "@/utils/utils.js";
+import { FILTER_TITLES } from "@/const/const";
 
 export default {
   components: {
     TripInfo,
+  },
+
+  data() {
+    return {
+      currentFilter: "everything",
+      filterTitles: FILTER_TITLES,
+    };
   },
 
   computed: {
@@ -119,11 +105,15 @@ export default {
     },
   },
 
-  // methods: {
-  //   getPrice() {
-  //     return getTotalPrice(this.tripData);
-  //   },
-  // },
+  methods: {
+    changeFilter(filter) {
+      this.$store.commit("setCurrentFilter", filter);
+    },
+
+    changeToAddMode() {
+      this.$store.commit("setAddMode");
+    },
+  },
 
   created() {
     this.$store.dispatch("loadTripData");
