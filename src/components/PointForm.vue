@@ -73,13 +73,17 @@
         Save
       </button>
       <button
-        @click="deletePoint(point.id)"
+        @click="isAddMode ? closeAddForm() : deletePoint(point.id)"
         class="event__reset-btn"
         type="reset"
       >
         {{ isAddMode ? "Cancel" : "Delete" }}
       </button>
-      <button @click="closeForm" class="event__rollup-btn" type="button">
+      <button
+        @click="isAddMode ? closeAddForm() : closeForm()"
+        class="event__rollup-btn"
+        type="button"
+      >
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
@@ -170,8 +174,12 @@ export default {
       this.$emit("reset-currentId", null);
     },
 
+    closeAddForm() {
+      this.$store.commit("disableAddMode");
+    },
+
     addPoint() {
-      this.closeForm();
+      this.closeAddForm();
       this.$store.dispatch(
         "addPoint",
         Object.assign({}, this.pointData, {

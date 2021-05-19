@@ -47,6 +47,7 @@
 import Point from "../components/Point";
 import PointForm from "../components/PointForm";
 import { SORT_TITLES } from "@/const/const";
+import { nanoid } from "nanoid";
 
 export default {
   components: {
@@ -79,7 +80,7 @@ export default {
 
     newPoint() {
       return Object.assign({}, this.point, {
-        id: "123",
+        id: nanoid(),
         type: this.offersData[0].type,
         destination: this.destinationsData[0],
         base_price: 0,

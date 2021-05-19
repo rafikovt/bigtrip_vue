@@ -52,6 +52,10 @@ export default new Vuex.Store({
       console.log(1)
       state.isAddmode = true;
     },
+
+    disableAddMode(state) {
+      state.isAddmode = false;
+    },
   },
 
   actions: {

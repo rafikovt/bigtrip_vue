@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentId === point.id">
+  <div v-if="currentId === point.id && !$store.state.isAddmode">
     <PointForm
       :point="point"
       :destinations="destinations"
@@ -73,7 +73,7 @@
       <button
         class="event__rollup-btn"
         type="button"
-        @click.prevent="$emit('change-form-mode', point.id)"
+        @click.prevent="changePointToForm(point.id)"
       >
         <span class="visually-hidden">Open event</span>
       </button>
@@ -117,6 +117,17 @@ export default {
         is_favorite: false,
         offers: this.offers[0].offers,
       });
+    },
+  },
+
+  methods: {
+    closeAddForm() {
+      this.$store.commit("disableAddMode");
+    },
+
+    changePointToForm(id) {
+      this.closeAddForm();
+      this.$emit("change-form-mode", id);
     },
   },
 };
