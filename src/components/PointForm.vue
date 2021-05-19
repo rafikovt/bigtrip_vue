@@ -33,21 +33,19 @@
 
       <div class="event__field-group event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input
+        <flatPickr
           class="event__input event__input--time"
           id="event-start-time-1"
-          type="text"
-          name="event-start-time"
-          :value="point.date_from"
+          v-model="pointData.date_from"
+          :config="config"
         />
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input
+        <flatPickr
           class="event__input event__input--time"
           id="event-end-time-1"
-          type="text"
-          name="event-end-time"
-          :value="point.date_to"
+          v-model="pointData.date_to"
+          :config="config"
         />
       </div>
 
@@ -117,12 +115,15 @@ import dayjs from "dayjs";
 import Offers from "@/components/Offers";
 import DestinationInfo from "./Destination-Info";
 import EventType from "@/components/EventType";
+import flatPickr from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
 
 export default {
   components: {
     Offers,
     DestinationInfo,
     EventType,
+    flatPickr,
   },
 
   props: {
@@ -135,18 +136,29 @@ export default {
     return {
       pointData: JSON.parse(JSON.stringify(this.point)),
       isAddMode: this.$store.state.isAddmode,
+      config: {
+        enableTime: true,
+        dateFormat: `y/m/d H:i`,
+      },
     };
   },
 
   methods: {
     updatePoint() {
       this.closeForm();
+      console.log(this.pointData.date_from);
+      console.log(
+        Object.assign({}, this.pointData, {
+          date_from: dayjs(this.pointData.date_from),
+          date_to: dayjs(this.pointData.date_to),
+        })
+      );
 
       this.$store.dispatch(
         "updateData",
         Object.assign({}, this.pointData, {
-          date_to: dayjs(this.point.date_to).toDate().toISOString(),
-          date_from: dayjs(this.point.date_from).toDate().toISOString(),
+          date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
+          date_to: dayjs(this.pointData.date_to).toISOString(),
         })
       );
     },

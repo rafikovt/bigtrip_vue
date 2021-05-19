@@ -4,7 +4,7 @@ import { API_URL } from "../config";
 import { PASSWORD } from "../config";
 import axios from "axios";
 // import { getOffers } from "../utils/utils";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import { sortDefault, sortPriceDown, sortTimeDown, filter } from "../utils/sort";
 
 Vue.use(Vuex);
@@ -148,12 +148,7 @@ export default new Vuex.Store({
     getDestinations: (state) => state.destinationsData,
     getOffers: (state) => state.offersData,
     getPoints: (state) => (sortType) => {
-      let newState = state.tripData.map((point) =>
-        Object.assign({}, point, {
-          date_from: dayjs(point.date_from),
-          date_to: dayjs(point.date_to),
-        })
-      );
+      let newState = state.tripData;
       newState = newState.filter(filter[state.currentFilter]);
       switch (sortType) {
         case "sort-price":
