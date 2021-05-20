@@ -10,7 +10,7 @@
   <li v-else class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="2019-03-18">{{
-        point.date_from.format("MMM-DD")
+        pointData.date_from.format("MMM-DD")
       }}</time>
       <div class="event__type">
         <img
@@ -27,11 +27,11 @@
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="2019-03-18T10:30">{{
-            point.date_from.format("HH-mm")
+            pointData.date_from.format("HH-mm")
           }}</time>
           &mdash;
           <time class="event__end-time" datetime="2019-03-18T11:00">{{
-            point.date_to.format("HH-mm")
+            pointData.date_to.format("HH-mm")
           }}</time>
         </p>
         <p class="event__duration">{{ eventDuration }}</p>
@@ -57,6 +57,7 @@
         class="event__favorite-btn"
         :class="{ 'event__favorite-btn--active': isFavorite }"
         type="button"
+        @click="isFavorite = !isFavorite"
       >
         <span class="visually-hidden">Add to favorite</span>
         <svg
@@ -84,6 +85,7 @@
 <script>
 import PointForm from "../components/PointForm";
 import { getEventDuration } from "@/utils/utils";
+import dayjs from "dayjs";
 
 export default {
   components: {
@@ -99,11 +101,8 @@ export default {
 
   data() {
     return {
-      isFavorite: this.point.is_favorite,
+      isFavorite: this.pointData.is_favorite,
       isFormMode: false,
-      eventDuration: getEventDuration(
-        this.point.date_to.diff(this.point.date_from)
-      ),
     };
   },
 
@@ -113,9 +112,22 @@ export default {
         id: 123,
         type: this.offers[0].type,
         destination: this.destinations[0],
+        date_from: new Date(),
         base_price: 0,
         is_favorite: false,
         offers: this.offers[0].offers,
+      });
+    },
+    eventDuration() {
+      return getEventDuration(
+        dayjs(this.point.date_to).diff(dayjs(this.point.date_from))
+      );
+    },
+
+    pointData() {
+      return Object.assign({}, this.point, {
+        date_from: dayjs(this.point.date_from),
+        date_to: dayjs(this.point.date_to),
       });
     },
   },

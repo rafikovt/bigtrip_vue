@@ -138,7 +138,7 @@ export default {
       isAddMode: this.$store.state.isAddmode,
       config: {
         enableTime: true,
-        dateFormat: `y/m/d H:i`,
+        dateFormat: "Y/m/d H:i",
       },
     };
   },
@@ -158,7 +158,7 @@ export default {
         "updateData",
         Object.assign({}, this.pointData, {
           date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
-          date_to: dayjs(this.pointData.date_to).toISOString(),
+          date_to: dayjs(this.pointData.date_to).toDate().toISOString(),
         })
       );
     },
@@ -195,8 +195,8 @@ export default {
       this.$store.dispatch(
         "addPoint",
         Object.assign({}, this.pointData, {
-          date_to: dayjs(this.point.date_to).toDate().toISOString(),
-          date_from: dayjs(this.point.date_from).toDate().toISOString(),
+          date_to: dayjs(this.pointData.date_to).toDate().toISOString(),
+          date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
         })
       );
     },
@@ -211,6 +211,10 @@ export default {
     destination() {
       return this.pointData.destination;
     },
+  },
+
+  beforeDestroy() {
+    this.closeForm();
   },
 };
 </script>
