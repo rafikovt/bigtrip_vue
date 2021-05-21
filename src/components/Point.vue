@@ -108,17 +108,6 @@ export default {
   },
 
   computed: {
-    newPoint() {
-      return Object.assign({}, this.point, {
-        id: 123,
-        type: this.offers[0].type,
-        destination: this.destinations[0],
-        date_from: new Date(),
-        base_price: 0,
-        is_favorite: false,
-        offers: this.offers[0].offers,
-      });
-    },
     eventDuration() {
       return getEventDuration(
         dayjs(this.point.date_to).diff(dayjs(this.point.date_from))

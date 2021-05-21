@@ -146,14 +146,6 @@ export default {
   methods: {
     updatePoint() {
       this.closeForm();
-      console.log(this.pointData.date_from);
-      console.log(
-        Object.assign({}, this.pointData, {
-          date_from: dayjs(this.pointData.date_from),
-          date_to: dayjs(this.pointData.date_to),
-        })
-      );
-
       this.$store.dispatch(
         "updateData",
         Object.assign({}, this.pointData, {
@@ -174,7 +166,6 @@ export default {
     },
 
     changeType(type) {
-      console.log(type);
       this.pointData = type;
     },
 
@@ -213,7 +204,20 @@ export default {
     },
   },
 
+  mounted() {
+    window.addEventListener("keydown", (evt) => {
+      if (evt.key === "Escape") {
+        this.isAddMode ? this.closeAddForm() : this.closeForm();
+      }
+    });
+  },
+
   beforeDestroy() {
+    window.removeEventListener("keydown", (evt) => {
+      if (evt.key === "Escape") {
+        this.isAddMode ? this.closeAddForm() : this.closeForm();
+      }
+    });
     this.closeForm();
   },
 };
