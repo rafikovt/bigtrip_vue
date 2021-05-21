@@ -13,15 +13,21 @@
         <div class="trip-main">
           <!-- Маршрут и стоимость -->
 
-          <TripInfo :totalPrice="totalPrice" />
+          <TripInfo :totalPrice="totalPrice" :tripData="tripData" />
           <div class="trip-main__trip-controls trip-controls">
             <nav class="trip-controls__trip-tabs trip-tabs">
               <router-link
-                class="trip-tabs__btn trip-tabs__btn--active"
+                class="trip-tabs__btn"
+                :class="{
+                  'trip-tabs__btn--active': $route.name === 'Main',
+                }"
                 :to="{ name: 'Main' }"
                 >Table</router-link
               >
-              <router-link class="trip-tabs__btn" :to="{ name: 'Stats' }"
+              <router-link
+                class="trip-tabs__btn"
+                :to="{ name: 'Stats' }"
+                :class="{ 'trip-tabs__btn--active': $route.name === 'Stats' }"
                 >Stats</router-link
               >
             </nav>

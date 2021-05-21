@@ -55,9 +55,9 @@
       </ul>
       <button
         class="event__favorite-btn"
-        :class="{ 'event__favorite-btn--active': isFavorite }"
+        :class="{ 'event__favorite-btn--active': point.is_favorite }"
         type="button"
-        @click="isFavorite = !isFavorite"
+        @click="changeFavoriteStatus"
       >
         <span class="visually-hidden">Add to favorite</span>
         <svg
@@ -101,8 +101,9 @@ export default {
 
   data() {
     return {
-      isFavorite: this.pointData.is_favorite,
+      isFavorite: this.point.is_favorite,
       isFormMode: false,
+      pointLocal: this.point,
     };
   },
 
@@ -140,6 +141,16 @@ export default {
     changePointToForm(id) {
       this.closeAddForm();
       this.$emit("change-form-mode", id);
+    },
+
+    changeFavoriteStatus() {
+      console.log(this.point);
+      this.$store.dispatch(
+        "updateData",
+        Object.assign({}, this.point, {
+          is_favorite: !this.point.is_favorite,
+        })
+      );
     },
   },
 };
