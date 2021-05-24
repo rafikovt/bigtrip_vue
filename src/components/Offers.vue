@@ -9,6 +9,7 @@
       type="checkbox"
       name="event-offer-luggage"
       :checked="pointDataLocal.offers.some((el) => el.title === offer.title)"
+      :disabled="$store.state.onSaving || $store.state.onDeleting"
     />
     <label class="event__offer-label" for="event-offer-luggage-1">
       <span class="event__offer-title">{{ offer.title }}</span>

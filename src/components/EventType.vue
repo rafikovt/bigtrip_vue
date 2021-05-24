@@ -15,6 +15,7 @@
       id="event-type-toggle-1"
       type="checkbox"
       v-model="openListTypes"
+      :disabled="$store.state.onSaving || $store.state.onDeleting"
     />
 
     <div class="event__type-list">

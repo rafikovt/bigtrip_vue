@@ -16,6 +16,8 @@ export default new Vuex.Store({
     offersData: [],
     currentFilter: "everything",
     isAddmode: false,
+    onSaving: false,
+    onDeleting: false,
   },
 
   mutations: {
@@ -109,6 +111,7 @@ export default new Vuex.Store({
         })
         .then((response) => {
           context.commit("updatePoint", response.data);
+          this.state.onSaving = false;
         });
     },
 
@@ -122,6 +125,7 @@ export default new Vuex.Store({
         })
         .then(() => {
           context.commit("deletePoint", id);
+          this.state.onDeleting = false;
         });
     },
 
@@ -141,6 +145,7 @@ export default new Vuex.Store({
         )
         .then((response) => {
           context.commit("addPoint", response.data);
+          this.state.onSaving = false;
         });
     },
   },

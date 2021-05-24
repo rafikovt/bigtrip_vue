@@ -21,6 +21,7 @@
           name="event-destination"
           v-model="pointData.destination.name"
           list="destination-list-1"
+          :disabled="$store.state.onSaving || $store.state.onDeleting"
         />
         <datalist id="destination-list-1">
           <option
@@ -38,6 +39,7 @@
           id="event-start-time-1"
           v-model="pointData.date_from"
           :config="config"
+          :disabled="$store.state.onSaving || $store.state.onDeleting"
         />
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -46,6 +48,7 @@
           id="event-end-time-1"
           v-model="pointData.date_to"
           :config="config"
+          :disabled="$store.state.onSaving || $store.state.onDeleting"
         />
       </div>
 
@@ -60,27 +63,37 @@
           type="text"
           name="event-price"
           v-model.number="pointData.base_price"
+          :disabled="$store.state.onSaving || $store.state.onDeleting"
         />
       </div>
 
       <button
+        :disabled="$store.state.onSaving || $store.state.onDeleting"
         class="event__save-btn btn btn--blue"
         type="submit"
         @click.prevent="isAddMode ? addPoint() : updatePoint()"
       >
-        Save
+        {{ $store.state.onSaving ? "Saving..." : "Save" }}
       </button>
       <button
         @click="isAddMode ? closeAddForm() : deletePoint(point.id)"
         class="event__reset-btn"
         type="reset"
+        :disabled="$store.state.onSaving || $store.state.onDeleting"
       >
-        {{ isAddMode ? "Cancel" : "Delete" }}
+        {{
+          isAddMode
+            ? "Cancel"
+            : $store.state.onDeleting
+            ? "Deleting..."
+            : "Delete"
+        }}
       </button>
       <button
         @click="isAddMode ? closeAddForm() : closeForm()"
         class="event__rollup-btn"
         type="button"
+        :disabled="$store.state.onSaving || $store.state.onDeleting"
       >
         <span class="visually-hidden">Open event</span>
       </button>
@@ -145,14 +158,16 @@ export default {
 
   methods: {
     updatePoint() {
-      this.closeForm();
-      this.$store.dispatch(
-        "updateData",
-        Object.assign({}, this.pointData, {
-          date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
-          date_to: dayjs(this.pointData.date_to).toDate().toISOString(),
-        })
-      );
+      this.$store.state.onSaving = true;
+      this.$store
+        .dispatch(
+          "updateData",
+          Object.assign({}, this.pointData, {
+            date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
+            date_to: dayjs(this.pointData.date_to).toDate().toISOString(),
+          })
+        )
+        .then(() => this.closeForm());
     },
 
     changeOffers(offer) {
@@ -170,7 +185,8 @@ export default {
     },
 
     deletePoint(id) {
-      this.$store.dispatch("deletePoint", id).then(this.closeForm());
+      this.$store.state.onDeleting = true;
+      this.$store.dispatch("deletePoint", id).then(() => this.closeForm());
     },
 
     closeForm() {
@@ -182,14 +198,16 @@ export default {
     },
 
     addPoint() {
-      this.closeAddForm();
-      this.$store.dispatch(
-        "addPoint",
-        Object.assign({}, this.pointData, {
-          date_to: dayjs(this.pointData.date_to).toDate().toISOString(),
-          date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
-        })
-      );
+      this.$store.state.onSaving = true;
+      this.$store
+        .dispatch(
+          "addPoint",
+          Object.assign({}, this.pointData, {
+            date_to: dayjs(this.pointData.date_to).toDate().toISOString(),
+            date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
+          })
+        )
+        .then(() => this.closeAddForm());
     },
   },
 
@@ -218,7 +236,6 @@ export default {
         this.isAddMode ? this.closeAddForm() : this.closeForm();
       }
     });
-    this.closeForm();
   },
 };
 </script>
