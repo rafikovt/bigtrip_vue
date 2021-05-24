@@ -1,5 +1,10 @@
 <template>
-  <form class="event event--edit" action="#" method="post">
+  <form
+    class="event event--edit"
+    action="#"
+    method="post"
+    :class="{ shake: $store.state.onError }"
+  >
     <header class="event__header">
       <EventType
         :currentType="pointData.type"
@@ -158,7 +163,6 @@ export default {
 
   methods: {
     updatePoint() {
-      this.$store.state.onSaving = true;
       this.$store
         .dispatch(
           "updateData",
@@ -167,7 +171,11 @@ export default {
             date_to: dayjs(this.pointData.date_to).toDate().toISOString(),
           })
         )
-        .then(() => this.closeForm());
+        .then(() => this.closeForm())
+        .catch(() => {
+          this.$store.state.onError = true;
+          this.$store.state.onSaving = false;
+        });
     },
 
     changeOffers(offer) {
@@ -186,11 +194,18 @@ export default {
 
     deletePoint(id) {
       this.$store.state.onDeleting = true;
-      this.$store.dispatch("deletePoint", id).then(() => this.closeForm());
+      this.$store
+        .dispatch("deletePoint", id)
+        .then(() => this.closeForm())
+        .catch(() => {
+          this.$store.state.onError = true;
+          this.$store.state.onDeleting = false;
+        });
     },
 
     closeForm() {
       this.$emit("reset-currentId", null);
+      this.$store.state.onError = false;
     },
 
     closeAddForm() {
@@ -239,3 +254,31 @@ export default {
   },
 };
 </script>
+
+<style>
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+.shake {
+  animation: shake 0.6s;
+}
+</style>

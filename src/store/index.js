@@ -18,6 +18,7 @@ export default new Vuex.Store({
     isAddmode: false,
     onSaving: false,
     onDeleting: false,
+    onError: false,
   },
 
   mutations: {
@@ -102,6 +103,8 @@ export default new Vuex.Store({
     },
 
     updateData(context, updatedData) {
+      this.state.onSaving = true;
+      this.state.onError = false;
       return axios
         .put(`${API_URL}/points/${updatedData.id}`, updatedData, {
           auth: {
@@ -113,9 +116,12 @@ export default new Vuex.Store({
           context.commit("updatePoint", response.data);
           this.state.onSaving = false;
         });
+
     },
 
     deletePoint(context, id) {
+      this.state.onDeleting = true;
+      this.state.onError = false;
       return axios
         .delete(`${API_URL}/points/${id}`, {
           auth: {
