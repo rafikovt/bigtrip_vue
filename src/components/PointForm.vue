@@ -210,6 +210,7 @@ export default {
 
     closeAddForm() {
       this.$store.commit("disableAddMode");
+      this.$store.state.onError = false;
     },
 
     addPoint() {
@@ -222,7 +223,11 @@ export default {
             date_from: dayjs(this.pointData.date_from).toDate().toISOString(),
           })
         )
-        .then(() => this.closeAddForm());
+        .then(() => this.closeAddForm())
+        .catch(() => {
+          this.$store.state.onError = true;
+          this.$store.state.onSaving = false;
+        });
     },
   },
 

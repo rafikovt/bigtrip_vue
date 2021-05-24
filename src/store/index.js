@@ -136,6 +136,8 @@ export default new Vuex.Store({
     },
 
     addPoint(context, data) {
+      this.state.onSaving = true;
+      this.state.onError = false;
       return axios
         .post(
           `${API_URL}/points`,
