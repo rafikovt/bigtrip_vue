@@ -95,7 +95,7 @@
         }}
       </button>
       <button
-        @click="isAddMode ? closeAddForm() : closeForm()"
+        @click="closeForm()"
         class="event__rollup-btn"
         type="button"
         :disabled="$store.state.onSaving || $store.state.onDeleting"
@@ -204,6 +204,7 @@ export default {
     },
 
     closeForm() {
+      this.$store.commit("disableAddMode");
       this.$emit("reset-currentId", null);
       this.$store.state.onError = false;
     },
@@ -248,6 +249,15 @@ export default {
         this.isAddMode ? this.closeAddForm() : this.closeForm();
       }
     });
+    if (this.$store.state.isAddmode) {
+      this.$emit("reset-currentId", null);
+    }
+  },
+
+  beforeMount() {
+    if (this.$store.state.isAddmode) {
+      this.$emit("reset-currentId", null);
+    }
   },
 
   beforeDestroy() {

@@ -102,7 +102,6 @@ export default {
   data() {
     return {
       isFavorite: this.point.is_favorite,
-      isFormMode: false,
       pointLocal: this.point,
     };
   },

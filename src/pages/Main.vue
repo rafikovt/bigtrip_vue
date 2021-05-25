@@ -28,6 +28,7 @@
           :offers="offersData"
           :isAddMode="isAddMode"
           :point="newPoint"
+          @reset-currentId="currentId = $event"
         />
       </li>
       <Point
