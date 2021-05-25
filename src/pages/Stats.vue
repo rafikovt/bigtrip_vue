@@ -3,22 +3,35 @@
     <h2 class="visually-hidden">Trip statistics</h2>
     <div class="statistics__item statistics__item--money">
       <line-chart
-        :chart-data="datacollection"
-        :options="options"
+        :chart-data="getDataforChart(costsForTypes)"
+        :options="chartMoneyOptions"
         class="statistics__chart statistics__chart--money"
       ></line-chart>
     </div>
     <div class="statistics__item statistics__item--transport">
-      <canvas class="statistics__chart statistics__chart--transport"></canvas>
+      <line-chart
+        :chart-data="getDataforChart(countOfTypes)"
+        :options="chartTypeOptions"
+        class="statistics__chart statistics__chart--money"
+      ></line-chart>
     </div>
     <div class="statistics__item statistics__item--time-spend">
-      <canvas class="statistics__chart statistics__chart--time"></canvas>
+      <line-chart
+        :chart-data="getDataforChart(timeDuration)"
+        :options="chartTimeOptions"
+        class="statistics__chart statistics__chart--money"
+      ></line-chart>
     </div>
   </section>
 </template>
 
 <script>
 import lineChart from "../utils/lineChart";
+import {
+  chartMoneyOptions,
+  chartTypeOptions,
+  chartTimeOptions,
+} from "../config";
 
 export default {
   components: {
@@ -28,82 +41,17 @@ export default {
   data() {
     return {
       dataCollection: {},
-      tripData: this.$store.getters["getPoints"](this.currentSortType),
-      options: {
-        plugins: {
-          datalabels: {
-            font: {
-              size: 13,
-            },
-            color: `#000000`,
-            anchor: `end`,
-            align: `start`,
-            formatter: (val) => `€ ${val}`,
-          },
-        },
-        title: {
-          display: true,
-          text: `MONEY`,
-          fontColor: `#000000`,
-          fontSize: 23,
-          position: `left`,
-        },
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                fontColor: `#000000`,
-                padding: 5,
-                fontSize: 13,
-              },
-              gridLines: {
-                display: false,
-                drawBorder: false,
-              },
-              barThickness: 44,
-            },
-          ],
-          xAxes: [
-            {
-              ticks: {
-                display: false,
-                beginAtZero: true,
-              },
-              gridLines: {
-                display: false,
-                drawBorder: false,
-              },
-              minBarLength: 50,
-            },
-          ],
-        },
-        legend: {
-          display: false,
-        },
-        tooltips: {
-          enabled: false,
-        },
-      },
+      chartMoneyOptions,
+      chartTypeOptions,
+      chartTimeOptions,
     };
   },
 
-  methods: {
-    fillData() {
-      this.dataCollection = {
-        labels: this.types,
-        datasets: [
-          {
-            data: this.costsForTypes,
-            backgroundColor: `#1E90FF`,
-            hoverBackgroundColor: `#B0E0E6`,
-            anchor: `start`,
-          },
-        ],
-      };
-    },
-  },
-
   computed: {
+    tripData() {
+      return this.$store.getters["getPoints"](this.currentSortType);
+    },
+
     types() {
       const types = [];
       this.tripData.forEach((element) => {
@@ -124,12 +72,41 @@ export default {
       return costsForTypes;
     },
 
-    datacollection() {
+    countOfTypes() {
+      const countOfTypes = [];
+      this.types.forEach((type) => {
+        let count = 0;
+        this.tripData.forEach((point) => {
+          count += point.type.toUpperCase() === type ? 1 : 0;
+        });
+        countOfTypes.push(count);
+      });
+      return countOfTypes;
+    },
+
+    timeDuration() {
+      const durationTimeOfTypes = [];
+      this.types.forEach((type) => {
+        let duration = 0;
+        this.tripData.forEach((point) => {
+          duration +=
+            point.type.toUpperCase() === type
+              ? point.date_to.diff(point.date_from)
+              : 0;
+        });
+        durationTimeOfTypes.push(duration);
+      });
+      return durationTimeOfTypes;
+    },
+  },
+
+  methods: {
+    getDataforChart(data) {
       return {
         labels: this.types,
         datasets: [
           {
-            data: this.costsForTypes,
+            data,
             backgroundColor: `#1E90FF`,
             hoverBackgroundColor: `#B0E0E6`,
             anchor: `start`,
@@ -138,9 +115,5 @@ export default {
       };
     },
   },
-
-  // mounted() {
-  //   this.fillData();
-  // },
 };
 </script>

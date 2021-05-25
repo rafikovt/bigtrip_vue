@@ -90,5 +90,9 @@ export default {
       });
     },
   },
+
+  beforeDestroy() {
+    this.currentSortType = "sort-day";
+  },
 };
 </script>

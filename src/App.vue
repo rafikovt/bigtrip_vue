@@ -64,7 +64,7 @@
           <button
             class="trip-main__event-add-btn btn btn--big btn--yellow"
             type="button"
-            @click="changeToAddMode"
+            @click="changeToAddMode()"
             :disabled="$store.state.isAddmode"
           >
             New event
@@ -119,6 +119,7 @@ export default {
 
     changeToAddMode() {
       this.$store.commit("setAddMode");
+      this.$router.push("/");
     },
   },
 
