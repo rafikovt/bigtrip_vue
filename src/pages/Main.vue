@@ -21,6 +21,9 @@
         <label class="trip-sort__btn" :for="`sort-${item}`">{{ item }}</label>
       </div>
     </form>
+    <p v-if="!tripData.length" class="trip-events__msg">
+      Click New Event to create your first point
+    </p>
     <ul class="trip-events__list">
       <li v-if="$store.state.isAddmode">
         <PointForm
